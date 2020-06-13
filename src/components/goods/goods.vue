@@ -33,6 +33,7 @@
               v-for="(food, index1) in item.foods"
               :key="index1"
               class="food-item"
+              @click="selectFood(food, $event)"
             >
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="" />
@@ -65,6 +66,12 @@
       :min-price="seller.minPrice"
       :select-foods="selectFoods"
     ></shopcart>
+    <food
+      @cart-add="cartAdd"
+      @cart-add2="cartAdd2"
+      :food="selectedFood"
+      ref="food"
+    ></food>
   </div>
 </template>
 
@@ -72,17 +79,20 @@
 import BScroll from 'better-scroll';
 import shopcart from '@/components/shopcart/shopcart';
 import cartcontrol from '@/components/cartcontrol/cartcontrol';
+import food from '@/components/food/food';
 const ERR_OK = 0;
 export default {
   components: {
     shopcart: shopcart,
-    cartcontrol: cartcontrol
+    cartcontrol: cartcontrol,
+    food: food
   },
   data() {
     return {
       goods: [],
       listHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      selectedFood: {}
     };
   },
   props: {
@@ -165,8 +175,21 @@ export default {
     cartAdd(target) {
       this._drop(target);
     },
+    cartAdd2(target) {
+      this._drop(target);
+    },
     _drop(target) {
-      this.$refs.shopCart.drop(target);
+      // 体验优化，异步执行下落动画
+      this.$nextTick(() => {
+        this.$refs.shopCart.drop(target);
+      });
+    },
+    selectFood(food, $event) {
+      if (!event._constructed) {
+        return;
+      }
+      this.selectedFood = food;
+      this.$refs.food.show();
     }
   }
 };
