@@ -1,17 +1,28 @@
 <template>
   <div class="ratingselect">
     <div class="rating-type" border-1px>
-      <span class="block positive" :class="{ active: selectType === 2 }"
-        >{{ desc.all }}<span class="count">47</span></span
+      <span
+        class="block positive"
+        :class="{ active: selectTypeTest === 2 }"
+        @click="select(2, $event)"
+        >{{ desc.all }}<span class="count">{{ ratings.length }}</span></span
       >
-      <span class="block positive" :class="{ active: selectType === 0 }"
-        >{{ desc.positive }}<span class="count">40</span></span
+      <span
+        class="block positive"
+        :class="{ active: selectTypeTest === 0 }"
+        @click="select(0, $event)"
+        >{{ desc.positive
+        }}<span class="count">{{ positives.length }}</span></span
       >
-      <span class="block negative" :class="{ active: selectType === 1 }"
-        >{{ desc.negative }}<span class="count">7</span></span
+      <span
+        class="block negative"
+        :class="{ active: selectTypeTest === 1 }"
+        @click="select(1, $event)"
+        >{{ desc.negative
+        }}<span class="count">{{ negatives.length }}</span></span
       >
     </div>
-    <div class="switch" :class="{ on: onlyContent }">
+    <div @click="toggleContent" class="switch" :class="{ on: onlyContentTest }">
       <span class="icon-check_circle"></span>
       <span class="text">只看有内容的评价</span>
     </div>
@@ -19,8 +30,8 @@
 </template>
 
 <script>
-// const POSITIVE = 0;
-// const NEGATIVE = 1;
+const POSITIVE = 0;
+const NEGATIVE = 1;
 const ALL = 2;
 export default {
   props: {
@@ -50,7 +61,38 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      selectTypeTest: this.selectType,
+      onlyContentTest: this.onlyContent
+    };
+  },
+  computed: {
+    positives() {
+      return this.ratings.filter(rating => {
+        return rating.rateType === POSITIVE;
+      });
+    },
+    negatives() {
+      return this.ratings.filter(rating => {
+        return rating.rateType === NEGATIVE;
+      });
+    }
+  },
+  methods: {
+    select(type, event) {
+      if (!event._constructed) {
+        return;
+      }
+      this.selectTypeTest = type;
+      this.$emit('ratingtype.select', type);
+    },
+    toggleContent(event) {
+      if (!event._constructed) {
+        return;
+      }
+      this.onlyContentTest = !this.onlyContentTest;
+      this.$emit('content.toggle', this.onlyContentTest);
+    }
   }
 };
 </script>
