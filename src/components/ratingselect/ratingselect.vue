@@ -84,14 +84,14 @@ export default {
         return;
       }
       this.selectTypeTest = type;
-      this.$emit('ratingtype.select', type);
+      this.$emit('ratingtypeSelect', type);
     },
     toggleContent(event) {
       if (!event._constructed) {
         return;
       }
       this.onlyContentTest = !this.onlyContentTest;
-      this.$emit('content.toggle', this.onlyContentTest);
+      this.$emit('contentToggle', this.onlyContentTest);
     }
   }
 };

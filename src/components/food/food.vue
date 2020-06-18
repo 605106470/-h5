@@ -46,6 +46,8 @@
             :only-content="onlyContent"
             :desc="desc"
             :ratings="food.ratings"
+            @ratingtypeSelect="ratingtypeSelect"
+            @contentToggle="contentToggle"
           ></ratingselect>
           <div class="rating-wrapper">
             <ul v-show="food.ratings && food.ratings.length">
@@ -64,7 +66,7 @@
                     :src="rating.avatar"
                   />
                 </div>
-                <div class="time">{{ rating.rateTime }}</div>
+                <div class="time">{{ rating.rateTime | formatDate }}</div>
                 <p class="text">
                   <span
                     :class="{
@@ -79,7 +81,9 @@
             <div
               class="no-rating"
               v-show="!food.ratings || !food.ratings.length"
-            ></div>
+            >
+              暂无评价
+            </div>
           </div>
         </div>
       </div>
@@ -93,6 +97,7 @@ import cartcontrol from '@/components/cartcontrol/cartcontrol';
 import split from '@/components/split/split';
 import ratingselect from '@/components/ratingselect/ratingselect';
 import Vue from 'vue';
+import { formatDate } from '@/common/js/date';
 
 const ALL = 2;
 
@@ -118,6 +123,12 @@ export default {
         negative: '吐槽'
       }
     };
+  },
+  filters: {
+    formatDate(time) {
+      let date = new Date(time);
+      return formatDate(date, 'yyyy-MM-dd hh:mm');
+    }
   },
   methods: {
     show() {
@@ -156,6 +167,18 @@ export default {
       } else {
         return type === this.selectType;
       }
+    },
+    ratingtypeSelect(type) {
+      this.selectType = type;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
+    },
+    contentToggle(onlyContentTest) {
+      this.onlyContent = onlyContentTest;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
     }
   }
 };
@@ -302,4 +325,8 @@ export default {
             color:rgb(0,160,220)
           .icon-thumb_down
             color:rgb(147,153,159)
+      .no-rating
+         padding:16px 0
+         font-size:12px
+         color:rgb(147,153,159)
 </style>
